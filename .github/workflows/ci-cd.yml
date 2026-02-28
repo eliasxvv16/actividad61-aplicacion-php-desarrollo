@@ -1,0 +1,44 @@
+name: CI/CD Wuthering Waves CRUD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Paso 1: Descargar el código del repositorio
+    - name: 📦 Checkout código
+      uses: actions/checkout@v3
+
+    # Paso 2: Iniciar sesión en DockerHub
+    - name: 🔐 Login a DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    # Paso 3: Construir la imagen Docker (BUILD)
+    - name: 🏗️ Build imagen Docker
+      run: |
+        docker build -t eliasxvv16/actividad61-aplicacion-crud-php:latest .
+
+    # Paso 4: Subir imagen a DockerHub (PUSH)
+    - name: 📤 Push imagen a DockerHub
+      run: |
+        docker push eliasxvv16/actividad61-aplicacion-crud-php:latest
+
+    # Paso 5: Conectar por SSH a producción y desplegar (PULL & RUN)
+    - name: 🚀 Desplegar en producción vía SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.PROD_HOST }}
+        username: ubuntu
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd ~/actividad61-aplicacion-php-produccion
+          docker-compose pull
+          docker-compose up -d
+          docker image prune -f
