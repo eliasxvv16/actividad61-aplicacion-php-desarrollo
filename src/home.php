@@ -70,9 +70,7 @@ $total_paginas = ceil($total / $por_pagina);
     </div>
 </nav>
 <div class="container">
-    <div class="page-header">
-        <h1 class="page-title">Personajes</h1>
-    </div>
+
     <?php if(isset($_GET['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">✅ Operación realizada con éxito<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
